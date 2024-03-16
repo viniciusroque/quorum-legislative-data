@@ -16,7 +16,7 @@ from reports.legislators_report import LegislatorsReport
 @dataclasses.dataclass
 class ReportError:
     line_number: int
-    # error: Exception | None
+    error: str
     raw_data: dict[str, Any]
 
 
@@ -28,7 +28,11 @@ def create_record[
     try:
         return record(**row), None
     except ValidationError as e:
-        return None, ReportError(line_number=line_number, raw_data=row)
+        return None, ReportError(
+            line_number=line_number,
+            error=str(e.errors()[0]["msg"]),
+            raw_data=row,
+        )
 
 
 class ReportBuilder:
@@ -110,3 +114,6 @@ class ReportBuilder:
         for vote_result in self._fetch_vote_result():
             for report_processor in reports_processors:
                 report_processor.process_vote_result(vote_result)
+
+    def get_errors(self) -> dict[str, list[ReportError]]:
+        return self._errors

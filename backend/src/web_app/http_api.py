@@ -12,9 +12,13 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 def render_reports(request: Request):
-    legislators, bills = get_reports()
+    legislators, bills, errors = get_reports()
     return templates.TemplateResponse(
         request=request,
         name="report.html",
-        context={"legislators_report": legislators, "bills_report": bills},
+        context={
+            "legislators_report": legislators,
+            "bills_report": bills,
+            "errors": errors,
+        },
     )

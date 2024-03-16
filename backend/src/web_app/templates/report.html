@@ -50,5 +50,15 @@
             {% endfor %}
         </tbody>
     </table>
+    <hr>
+    <h1>Errors Report</h1>
+    {% for filename, errors_list in errors.items() %}
+        <h2>{{ filename }}</h2>
+        <ul>
+            {% for error in errors_list %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
 </body>
 </html>
