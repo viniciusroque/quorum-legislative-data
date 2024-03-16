@@ -14,13 +14,11 @@ class VoteType(int, enum.Enum):
 @dataclasses.dataclass
 class VoteResult:
     id: int
+    legislator_id: int
     legislator: Legislator
+    vote_id: int
     vote: Vote
     vote_type: VoteType
-
-    @property
-    def vote_type_key(self) -> int:
-        return self.vote_type.value
 
     def __str__(self):
         return f"{self.legislator} ({self.legislator.id}): voted {self.vote_type} on {self.vote} ({self.vote.id})"

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reports</title>
+</head>
+<body>
+    <h1>Legislador Report</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Legislador</th>
+                <th>Supported bills</th>
+                <th>Opposed bills</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for legislator_id, votes_summary in legislators_report.legislators_votes.items() %}
+                <tr>
+                    <td>{{ legislator_id }}</td>
+                    <td>{{ legislators_report.legislator_mapping[legislator_id].name }}</td>
+                    <td>{{ votes_summary.count_supported_bills }}</td>
+                    <td>{{ votes_summary.count_opposed_bills }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <h1>Bills Report</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Bill</th>
+                <th>Supporters</th>
+                <th>Opposers</th>
+                <th>Primary Sponsor</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill_id, votes_summary in bills_report.bill_votes.items() %}
+                <tr>
+                    <td>{{ bill_id }}</td>
+                    <td>{{ bills_report.bills_mapping[bill_id].title }}</td>
+                    <td>{{ votes_summary.count_supporters }}</td>
+                    <td>{{ votes_summary.count_opposers }}</td>
+                    <td>{{ bills_report.bills_mapping[bill_id].primary_sponsor.name }}</td>
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

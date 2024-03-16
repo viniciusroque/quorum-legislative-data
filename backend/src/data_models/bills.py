@@ -9,6 +9,7 @@ from data_models.legislators import Legislator
 class Bill:
     id: int
     title: str
+    sponsor_id: int
     primary_sponsor: Legislator
 
     def __str__(self):

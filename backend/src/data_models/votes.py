@@ -8,6 +8,7 @@ from data_models.bills import Bill
 @dataclasses.dataclass
 class Vote:
     id: int
+    bill_id: int
     bill: Bill
 
     def __str__(self):
