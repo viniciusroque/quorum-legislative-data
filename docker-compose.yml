@@ -4,6 +4,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    command: "uvicorn http_api:app --reload --reload --host 0.0.0.0"
     volumes:
       - .:/usr/app
     ports:
