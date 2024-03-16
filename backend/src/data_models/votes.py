@@ -1,5 +1,3 @@
-from typing import Dict
-
 from pydantic import Field, dataclasses
 
 from data_models.bills import Bill
@@ -20,7 +18,7 @@ class Vote:
 
 @dataclasses.dataclass
 class VoteMapping:
-    votes: Dict[int, Vote] = Field(default_factory=dict)
+    votes: dict[int, Vote] = Field(default_factory=dict)
 
     def add(self, vote: Vote):
         self.votes.update({vote.id: vote})

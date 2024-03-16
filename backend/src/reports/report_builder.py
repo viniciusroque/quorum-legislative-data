@@ -1,14 +1,13 @@
 from collections import defaultdict
+from typing import Any, Iterable, Type
 
-from pydantic import dataclasses, ValidationError
+from pydantic import ValidationError, dataclasses
 
 from data_models.bills import Bill, BillMapping
 from data_models.legislators import Legislator, LegislatorMapping
 from data_models.vote_results import VoteResult
 from data_models.votes import Vote, VoteMapping
 from lib.csv_parser import parse_csv
-from typing import Iterable, Any, Type
-
 from reports.bills_report import BillsReport
 from reports.legislators_report import LegislatorsReport
 

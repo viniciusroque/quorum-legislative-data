@@ -1,5 +1,3 @@
-from typing import Dict
-
 from pydantic import Field, dataclasses
 
 from data_models.legislators import Legislator
@@ -21,7 +19,7 @@ class Bill:
 
 @dataclasses.dataclass
 class BillMapping:
-    bills: Dict[int, Bill] = Field(default_factory=dict)
+    bills: dict[int, Bill] = Field(default_factory=dict)
 
     def add(self, bill: Bill):
         self.bills.update({bill.id: bill})

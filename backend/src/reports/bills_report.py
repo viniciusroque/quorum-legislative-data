@@ -1,10 +1,10 @@
 from collections import defaultdict
 from multiprocessing.process import BaseProcess
 
-from pydantic import dataclasses, Field
+from pydantic import Field, dataclasses
+
 from data_models.bills import Bill
 from data_models.vote_results import VoteResult, VoteType
-from collections import defaultdict
 
 
 @dataclasses.dataclass
