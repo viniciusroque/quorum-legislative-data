@@ -23,7 +23,7 @@ class BillMapping(MappingInterface[Bill]):
     bills: dict[int, Bill] = Field(default_factory=dict)
 
     def add(self, item: Bill) -> None:
-        self.bills.update({item.id: item})
+        self.bills[item.id] = item
 
     def get_by_id(self, id: int) -> Bill | None:
         try:
