@@ -21,11 +21,11 @@ class Legislator(BaseDataModel):
 
 
 @dataclasses.dataclass
-class LegislatorMapping(MappingInterface):
+class LegislatorMapping(MappingInterface[Legislator]):
     legislators: dict[int, Legislator] = Field(default_factory=dict)
 
     def add(self, item: Legislator) -> None:
-        self.legislators.update({item.id: item})
+        self.legislators[item.id] = item
 
     def get_by_id(self, id: int) -> Legislator | None:
         try:

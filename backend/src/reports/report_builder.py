@@ -1,6 +1,7 @@
 from collections import defaultdict
 from typing import Any, Iterable
 
+from data_models.base_data_model import BaseDataModel
 from data_models.bills import Bill, BillMapping
 from data_models.legislators import Legislator, LegislatorMapping
 from data_models.mapping_interface import MappingInterface
@@ -19,26 +20,25 @@ class ReportError:
     raw_data: dict[str, Any]
 
 
-def create_record[
-    BaseDataModel: type[Legislator | Bill | Vote | VoteResult],
-](
-    record: BaseDataModel,
+def create_record(
+    record: type[BaseDataModel],
     mapping: MappingInterface,
     row: dict[str, Any],
     line_number: int,
 ) -> (tuple[BaseDataModel, None] | tuple[None, ReportError]):
 
-    if mapping.get_by_id(row.get("id", -1)):
-        return None, ReportError(
-            line_number=line_number,
-            error="Duplicated record.",
-            raw_data=row,
-        )
     try:
         data_model = record(**row)
     except ValidationError as e:
         return None, ReportError(
             line_number=line_number, error=str(e.errors()[0]["msg"]), raw_data=row
+        )
+
+    if mapping.get_by_id(data_model.id):
+        return None, ReportError(
+            line_number=line_number,
+            error="Duplicated record.",
+            raw_data=row,
         )
 
     return data_model, None
