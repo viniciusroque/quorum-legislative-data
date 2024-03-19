@@ -1,10 +1,10 @@
 from collections import defaultdict
-from multiprocessing.process import BaseProcess
 
 from pydantic import Field, dataclasses
 
 from data_models.bills import Bill
 from data_models.vote_results import VoteResult, VoteType
+from reports.base_processors import BaseProcessor
 
 
 @dataclasses.dataclass
@@ -28,7 +28,7 @@ class BillVotes:
 
 
 @dataclasses.dataclass
-class BillsReport(BaseProcess):
+class BillsReport(BaseProcessor):
     bill_votes: dict[int, BillVotes] = Field(
         default_factory=lambda: defaultdict(BillVotes)
     )

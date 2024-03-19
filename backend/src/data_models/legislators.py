@@ -1,8 +1,11 @@
+from annotated_types import Le
+from data_models.base_data_model import BaseDataModel
+from data_models.mapping_interface import MappingInterface
 from pydantic import Field, dataclasses
 
 
 @dataclasses.dataclass
-class Legislator:
+class Legislator(BaseDataModel):
     id: int
     name: str
 
@@ -18,14 +21,17 @@ class Legislator:
 
 
 @dataclasses.dataclass
-class LegislatorMapping:
+class LegislatorMapping(MappingInterface):
     legislators: dict[int, Legislator] = Field(default_factory=dict)
 
-    def add(self, legislator: Legislator):
-        self.legislators.update({legislator.id: legislator})
+    def add(self, item: Legislator) -> None:
+        self.legislators.update({item.id: item})
 
     def get_by_id(self, id: int) -> Legislator | None:
-        return self.legislators.get(int(id))
+        try:
+            return self.legislators.get(int(id))
+        except ValueError:
+            return None
 
     def __str__(self):
         return f"{self.legislators}"

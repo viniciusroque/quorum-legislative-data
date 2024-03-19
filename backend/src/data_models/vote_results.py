@@ -2,6 +2,7 @@ import enum
 
 from pydantic import dataclasses
 
+from data_models.base_data_model import BaseDataModel
 from data_models.legislators import Legislator
 from data_models.votes import Vote
 
@@ -12,7 +13,7 @@ class VoteType(int, enum.Enum):
 
 
 @dataclasses.dataclass
-class VoteResult:
+class VoteResult(BaseDataModel):
     id: int
     legislator_id: int
     legislator: Legislator

@@ -1,10 +1,11 @@
-from pydantic import Field, dataclasses
-
+from data_models.base_data_model import BaseDataModel
 from data_models.bills import Bill
+from data_models.mapping_interface import MappingInterface
+from pydantic import Field, dataclasses
 
 
 @dataclasses.dataclass
-class Vote:
+class Vote(BaseDataModel):
     id: int
     bill_id: int
     bill: Bill
@@ -17,17 +18,20 @@ class Vote:
 
 
 @dataclasses.dataclass
-class VoteMapping:
+class VoteMapping(MappingInterface[Vote]):
     votes: dict[int, Vote] = Field(default_factory=dict)
 
-    def add(self, vote: Vote):
-        self.votes.update({vote.id: vote})
+    def add(self, item: Vote) -> None:
+        self.votes.update({item.id: item})
 
     def get_by_id(self, id: int) -> Vote | None:
-        return self.votes.get(int(id))
+        try:
+            return self.votes.get(int(id))
+        except ValueError:
+            return None
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.votes}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.votes}"

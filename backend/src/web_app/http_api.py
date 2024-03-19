@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
-
 from reports.report_from_local_csv import get_reports
 
 app = FastAPI()

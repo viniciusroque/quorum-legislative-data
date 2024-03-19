@@ -1,13 +1,13 @@
 from collections import defaultdict
-from typing import Any, Iterable, Type
-
-from pydantic import ValidationError, dataclasses
+from typing import Any, Iterable
 
 from data_models.bills import Bill, BillMapping
 from data_models.legislators import Legislator, LegislatorMapping
+from data_models.mapping_interface import MappingInterface
 from data_models.vote_results import VoteResult
 from data_models.votes import Vote, VoteMapping
 from lib.csv_parser import parse_csv
+from pydantic import ValidationError, dataclasses
 from reports.bills_report import BillsReport
 from reports.legislators_report import LegislatorsReport
 
@@ -20,18 +20,28 @@ class ReportError:
 
 
 def create_record[
-    T
-](record: Type[T], row: dict[str, Any], line_number: int) -> (
-    tuple[T, None] | tuple[None, ReportError]
-):
-    try:
-        return record(**row), None
-    except ValidationError as e:
+    BaseDataModel: type[Legislator | Bill | Vote | VoteResult],
+](
+    record: BaseDataModel,
+    mapping: MappingInterface,
+    row: dict[str, Any],
+    line_number: int,
+) -> (tuple[BaseDataModel, None] | tuple[None, ReportError]):
+
+    if mapping.get_by_id(row.get("id", -1)):
         return None, ReportError(
             line_number=line_number,
-            error=str(e.errors()[0]["msg"]),
+            error="Duplicated record.",
             raw_data=row,
         )
+    try:
+        data_model = record(**row)
+    except ValidationError as e:
+        return None, ReportError(
+            line_number=line_number, error=str(e.errors()[0]["msg"]), raw_data=row
+        )
+
+    return data_model, None
 
 
 class ReportBuilder:
@@ -62,35 +72,37 @@ class ReportBuilder:
 
     def _load_legislator(self):
         for line_number, row in parse_csv(self._legislator_csv_path):
-            legislator, error = create_record(Legislator, row, line_number)
+            legislator, error = create_record(
+                Legislator, self._legislators, row, line_number
+            )
             if error:
                 self._errors[self._legislator_csv_path].append(error)
                 continue
 
-            assert legislator
+            assert isinstance(legislator, Legislator)
             self._legislators.add(legislator)
 
     def _load_bill(self):
         for line_number, row in parse_csv(self._bill_csv_path):
             sponsor_id = row["sponsor_id"]
             row["primary_sponsor"] = self._legislators.get_by_id(sponsor_id)
-            bill, error = create_record(Bill, row, line_number)
+            bill, error = create_record(Bill, self._bills, row, line_number)
             if error:
                 self._errors[self._bill_csv_path].append(error)
                 continue
 
-            assert bill
+            assert isinstance(bill, Bill)
             self._bills.add(bill)
 
     def _load_vote(self):
         for line_number, row in parse_csv(self._vote_csv_path):
             row["bill"] = self._bills.get_by_id(row["bill_id"])
-            vote, error = create_record(Vote, row, line_number)
+            vote, error = create_record(Vote, self._votes, row, line_number)
             if error:
                 self._errors[self._vote_csv_path].append(error)
                 continue
 
-            assert vote
+            assert isinstance(vote, Vote)
             self._votes.add(vote)
 
     def _fetch_vote_result(self) -> Iterable[VoteResult]:
@@ -98,12 +110,14 @@ class ReportBuilder:
             row["legislator"] = self._legislators.get_by_id(row["legislator_id"])
             row["vote"] = self._votes.get_by_id(row["vote_id"])
 
-            vote_result, error = create_record(VoteResult, row, line_number)
+            vote_result, error = create_record(
+                VoteResult, self._votes, row, line_number
+            )
             if error:
                 self._errors[self._vote_result_csv_path].append(error)
                 continue
 
-            assert vote_result
+            assert isinstance(vote_result, VoteResult)
             yield vote_result
 
     def build_report(self, reports_processors: list[LegislatorsReport | BillsReport]):
