@@ -5,7 +5,7 @@ services:
     build:
       context: ./backend
       dockerfile: ./Dockerfile
-      # command: ["tail", "-f", "/dev/null"]
+      target: ${ENV:-development}
     volumes:
       - .:/usr/app
     ports:
