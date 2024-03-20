@@ -24,7 +24,7 @@ def create_record(
     mapping: MappingInterface,
     row: dict[str, Any],
     line_number: int,
-) -> (tuple[BaseDataModel, None] | tuple[None, ReportError]):
+) -> tuple[BaseDataModel, None] | tuple[None, ReportError]:
 
     try:
         data_model = record(**row)
@@ -74,6 +74,7 @@ class ReportBuilder:
             legislator, error = create_record(
                 Legislator, self._legislators, row, line_number
             )
+
             if error:
                 self._errors[self._legislator_csv_path].append(error)
                 continue
@@ -108,7 +109,6 @@ class ReportBuilder:
         for line_number, row in parse_csv(self._vote_result_csv_path):
             row["legislator"] = self._legislators.get_by_id(row["legislator_id"])
             row["vote"] = self._votes.get_by_id(row["vote_id"])
-
             vote_result, error = create_record(
                 VoteResult, self._votes, row, line_number
             )
@@ -123,6 +123,7 @@ class ReportBuilder:
         self._load_legislator()
         self._load_bill()
         self._load_vote()
+
         for vote_result in self._fetch_vote_result():
             for report_processor in reports_processors:
                 report_processor.process_vote_result(vote_result)

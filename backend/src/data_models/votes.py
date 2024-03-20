@@ -21,7 +21,7 @@ class VoteMapping(MappingInterface[Vote]):
     votes: dict[int, Vote] = Field(default_factory=dict)
 
     def add(self, item: Vote) -> None:
-        self.votes[item.id] =  item
+        self.votes[item.id] = item
 
     def get_by_id(self, id: int) -> Vote | None:
         try:
