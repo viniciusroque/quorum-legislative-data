@@ -1,9 +1,7 @@
 from abc import ABC
+import pydantic
 
-from pydantic import dataclasses
 
-
-@dataclasses.dataclass
-class BaseDataModel(ABC):
+class BaseDataModel(pydantic.BaseModel, ABC):
 
     id: int

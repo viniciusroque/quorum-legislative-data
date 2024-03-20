@@ -9,8 +9,7 @@ from data_models.vote_results import VoteResult
 from data_models.votes import Vote, VoteMapping
 from lib.csv_parser import parse_csv
 from pydantic import ValidationError, dataclasses
-from reports.bills_report import BillsReport
-from reports.legislators_report import LegislatorsReport
+from reports.base_processors import BaseProcessor
 
 
 @dataclasses.dataclass
@@ -120,7 +119,7 @@ class ReportBuilder:
             assert isinstance(vote_result, VoteResult)
             yield vote_result
 
-    def build_report(self, reports_processors: list[LegislatorsReport | BillsReport]):
+    def build_report(self, reports_processors: list[BaseProcessor]):
         self._load_legislator()
         self._load_bill()
         self._load_vote()

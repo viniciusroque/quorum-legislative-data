@@ -4,7 +4,6 @@ from data_models.mapping_interface import MappingInterface
 from pydantic import Field, dataclasses
 
 
-@dataclasses.dataclass
 class Bill(BaseDataModel):
     id: int
     title: str

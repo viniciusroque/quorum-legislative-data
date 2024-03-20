@@ -4,14 +4,9 @@ from data_models.mapping_interface import MappingInterface
 from pydantic import Field, dataclasses
 
 
-@dataclasses.dataclass
 class Legislator(BaseDataModel):
     id: int
     name: str
-
-    def __init__(self, id: int, name: str):
-        self.id = id
-        self.name = name
 
     def __str__(self):
         return f"{self.name}"
