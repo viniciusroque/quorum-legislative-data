@@ -9,7 +9,9 @@ from data_models.vote_results import VoteResult
 from data_models.votes import Vote, VoteMapping
 from lib.csv_parser import parse_csv
 from pydantic import ValidationError, dataclasses
-from reports.base_processors import BaseProcessor
+from reports.report_processors.report_processors_interface import (
+    ReportProcessorInterface,
+)
 
 
 @dataclasses.dataclass
@@ -43,7 +45,7 @@ def create_record(
     return data_model, None
 
 
-class ReportBuilder:
+class ReportBuilderCSV:
     _legislators: LegislatorMapping
     _legislator_csv_path: str
     _bills: BillMapping
@@ -119,7 +121,7 @@ class ReportBuilder:
             assert isinstance(vote_result, VoteResult)
             yield vote_result
 
-    def build_report(self, reports_processors: list[BaseProcessor]):
+    def build_report(self, reports_processors: list[ReportProcessorInterface]):
         self._load_legislator()
         self._load_bill()
         self._load_vote()

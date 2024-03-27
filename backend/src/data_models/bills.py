@@ -1,3 +1,5 @@
+from typing import Optional
+
 from data_models.base_data_model import BaseDataModel
 from data_models.legislators import Legislator
 from data_models.mapping_interface import MappingInterface
@@ -8,7 +10,7 @@ class Bill(BaseDataModel):
     id: int
     title: str
     sponsor_id: int
-    primary_sponsor: Legislator
+    primary_sponsor: Legislator | None = None
 
     def __str__(self):
         return f"{self.title}"

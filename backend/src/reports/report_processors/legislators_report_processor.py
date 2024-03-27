@@ -4,7 +4,9 @@ from data_models.bills import Bill
 from data_models.legislators import Legislator
 from data_models.vote_results import VoteResult, VoteType
 from pydantic import Field, dataclasses
-from reports.base_processors import BaseProcessor
+from reports.report_processors.report_processors_interface import (
+    ReportProcessorInterface,
+)
 
 
 @dataclasses.dataclass
@@ -28,7 +30,7 @@ class LegislatorVotes:
 
 
 @dataclasses.dataclass
-class LegislatorsReport(BaseProcessor):
+class LegislatorsReportProcessor(ReportProcessorInterface):
 
     legislators_votes: dict[int, LegislatorVotes] = Field(
         default_factory=lambda: defaultdict(LegislatorVotes)
@@ -46,5 +48,7 @@ class LegislatorsReport(BaseProcessor):
                 vote_result.vote.bill.id
             )
 
+        # for expand list of bills per legislator
         self.bills_mapping[vote_result.vote.bill.id] = vote_result.vote.bill
+
         self.legislator_mapping[vote_result.legislator.id] = vote_result.legislator
